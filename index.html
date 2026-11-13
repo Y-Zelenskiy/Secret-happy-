@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Happy Birthday!</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(ellipse at 50% 40%, #63266e 0%, transparent 65%),
+        linear-gradient(145deg, #100b27, #32103e, #130b2c);
+    color: white;
+}
+
+#background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    padding-top: max(35px, env(safe-area-inset-top));
+    padding-bottom: max(90px, env(safe-area-inset-bottom));
+    text-align: center;
+}
+
+.glow {
+    position: absolute;
+    width: 70vw;
+    height: 70vw;
+    max-width: 450px;
+    max-height: 450px;
+    background: #ec68ff;
+    filter: blur(100px);
+    opacity: 0.22;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+/* ТЕКСТ ЗВЕРХУ */
+h1 {
+    order: 1;
+    margin-bottom: 25px;
+    font-size: clamp(32px, 10vw, 58px);
+    font-weight: 900;
+    line-height: 1.15;
+    background: linear-gradient(90deg, #fff0a6, #ff91dc, #fff, #ffd76b);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    opacity: 0;
+    transform: translateY(-25px) scale(.85);
+    animation:
+        showText 1.5s ease 0.5s forwards,
+        shine 5s linear 2s infinite;
+    filter: drop-shadow(0 0 12px #ff8bea66);
+}
+
+@keyframes showText {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes shine {
+    to { background-position: 300% center; }
+}
+
+/* GIF +20% */
+.gif {
+    order: 2;
+    width: min(90vw, 50.4vh, 456px);
+    height: min(90vw, 50.4vh, 456px);
+    object-fit: contain;
+    animation: floating 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 25px #f18bff66);
+}
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+}
+
+.subtitle {
+    order: 3;
+    margin-top: 20px;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #eacaff;
+    opacity: 0;
+    animation: fadeIn 2s ease 2s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.gift {
+    position: absolute;
+    top: -60px;
+    animation: fall linear forwards;
+    user-select: none;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-60px) rotate(0deg);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% {
+        transform: translateY(110vh) rotate(600deg);
+        opacity: 0;
+    }
+}
+
+.star {
+    position: absolute;
+    color: #ffe9a9;
+    animation: twinkle 2s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: .2; transform: scale(.7); }
+    50% { opacity: 1; transform: scale(1.3); }
+}
+
+.music-btn {
+    position: absolute;
+    bottom: max(25px, env(safe-area-inset-bottom));
+    z-index: 5;
+    border: 1px solid #ffffff55;
+    background: #ffffff20;
+    backdrop-filter: blur(12px);
+    color: white;
+    border-radius: 50px;
+    padding: 14px 27px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.music-btn:active {
+    transform: scale(.95);
+}
+
+@media (max-height: 550px) {
+    .gif {
+        width: min(54vw, 54vh);
+        height: min(54vw, 54vh);
+    }
+
+    h1 {
+        margin-bottom: 8px;
+        font-size: 30px;
+    }
+
+    .subtitle {
+        margin-top: 5px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="background"></div>
+
+<div class="container">
+    <div class="glow"></div>
+
+    <h1>Happy birthday</h1>
+
+    <!-- GIF -->
+    <img class="gif"
+         src="birthday.gif"
+         alt="Birthday GIF">
+
+    <div class="subtitle">
+        ✨ YOUR SPECIAL DAY ✨
+    </div>
+
+    <button class="music-btn" id="musicBtn">
+        🔊 PLAY MUSIC
+    </button>
+</div>
+
+<!-- MUSIC -->
+<audio id="music" loop autoplay preload="auto">
+    <source src="happy-happy-happy-song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const music = document.getElementById("music");
+const btn = document.getElementById("musicBtn");
+
+async function playMusic() {
+    try {
+        await music.play();
+        btn.textContent = "🔊 MUSIC ON";
+    } catch (error) {
+        btn.textContent = "🎵 TAP TO PLAY";
+    }
+}
+
+btn.addEventListener("click", async () => {
+    if (music.paused) {
+        await playMusic();
+    } else {
+        music.pause();
+        btn.textContent = "🎵 PLAY MUSIC";
+    }
+});
+
+document.addEventListener("touchstart", () => {
+    if (music.paused) playMusic();
+}, { once: true });
+
+document.addEventListener("click", () => {
+    if (music.paused) playMusic();
+}, { once: true });
+
+window.addEventListener("load", playMusic);
+
+// Подарунки
+const background = document.getElementById("background");
+
+const emojis = [
+    "🎁", "🎀", "✨", "🎊",
+    "💝", "⭐", "🎈", "🩷"
+];
+
+function createGift() {
+    const gift = document.createElement("div");
+
+    gift.className = "gift";
+    gift.textContent =
+        emojis[Math.floor(Math.random() * emojis.length)];
+
+    gift.style.left = Math.random() * 100 + "vw";
+    gift.style.fontSize = (18 + Math.random() * 23) + "px";
+    gift.style.animationDuration = (5 + Math.random() * 6) + "s";
+
+    background.appendChild(gift);
+
+    setTimeout(() => gift.remove(), 12000);
+}
+
+setInterval(createGift, 350);
+
+// Зірочки
+for (let i = 0; i < 25; i++) {
+    const star = document.createElement("div");
+
+    star.className = "star";
+    star.textContent = "✦";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+    star.style.fontSize = (8 + Math.random() * 14) + "px";
+    star.style.animationDelay = Math.random() * 3 + "s";
+
+    background.appendChild(star);
+}
+</script>
+
+</body>
+</html>
